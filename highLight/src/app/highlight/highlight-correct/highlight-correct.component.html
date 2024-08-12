@@ -1,13 +1,12 @@
 <form class="selectors-form">
-    <label>Set Correct</label>
-    <br>
-    <span class="selector-item" 
-          *ngFor="let key of selectorsKeys()" 
-          [class.cursor]="selectors?.get(key)?.isSelected"
-          [class.selected]="selectors?.get(key)?.isCorrect"
-          [class.disabled]="!selectors?.get(key)?.isCorrect"
-          (click)="toggleSelection(key)">
-      {{ key }}
-    </span>
-  </form>
-  
+  <label>Set Correct</label>
+  <br>
+  <span class="selector-item" 
+        *ngFor="let item of selectors; let i = index" 
+        [class.cursor]="item.isSelected"
+        [class.selected]="item.isCorrect"
+        [class.disabled]="!item.isCorrect"
+        (click)="toggleSelection(i)">
+    {{ item.word }}
+  </span>
+</form>

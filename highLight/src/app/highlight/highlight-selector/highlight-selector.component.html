@@ -2,10 +2,9 @@
     <label>Set Selectors</label>
     <br>
     <span class="selector-item" 
-         *ngFor="let key of selectorsKeys()" 
-         [class.selected]="selectors?.get(key)?.isSelected"
-         (click)="toggleSelection(key)">
-      {{ key }}
-</span>
+         *ngFor="let item of selectors; let i = index" 
+         [class.selected]="item.isSelected"
+         (click)="toggleSelection(i)">
+      {{ item.word }}
+    </span>
 </form>
-  

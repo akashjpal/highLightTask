@@ -14,14 +14,14 @@
     cursor: default;
   }
   
-  .selector-item.selected {
+  .selected {
     /* background-color: gray; */
     background-color: rgba(223, 223, 51, 0.885);
     border: 1px solid #ccc;
     color: white;
   }
 
-  .selector-item.cursor {
+  .cursor {
     /* background-color: gray; */
     cursor: pointer;
   }
