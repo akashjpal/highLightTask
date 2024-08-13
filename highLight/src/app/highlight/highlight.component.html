@@ -29,49 +29,46 @@
  </div>
 
  <!-- form -->
-<div class="question--section">
+ <div class="question--section">
     <form>
         <div class="steam-section mb-3">
             <div>
                 <label for="question">Question (Stem)*</label>
                 <label>* Fields are required</label>
             </div>
-            <!-- <br> -->
             <textarea type="text" name="question" placeholder="Enter Question(Stem)" (blur)="updateVisibility()" (change)="updateVisibility()" id="question" (input)="autoResize($event)"
-            (keydown)="onEnter($event)"    [(ngModel)]="question" rows="1"></textarea>
+            (keydown)="onEnter($event)" [(ngModel)]="question" rows="1"></textarea>
         </div>
         
         <div class="text-phrase-section mb-3">
             <label for="textPhrase">Text Phrase*</label><br>
             <textarea type="text" name="textPhrase" placeholder="Enter Text Phrase" (blur)="updateVisibility()" (change)="updateVisibility()" id="textPhrase"  (input)="autoResize($event)"
-            (keydown)="onEnter($event)"  (mouseup)="handleCustomSelection($event)"  [(ngModel)]="textPhrase" rows="1"></textarea>
+            (keydown)="onEnter($event)" [(ngModel)]="textPhrase" rows="1"></textarea>
         </div>
         <div class="radio-button-section">
             <div>Set Answer Type*</div>
                 <div class="radio-buttons">
                     <input type="radio" id="word" (change)="updateVisibility()" name="drone" value="word" [(ngModel)]="answerType" />
                     <label for="word">Word</label>
-                <!-- </div>
-                
-                <div> -->
                     <input type="radio" id="sentence" (change)="updateVisibility()" name="drone" value="sentence" [(ngModel)]="answerType" />
                     <label for="sentence">Sentence</label>
-                <!-- </div>
-                
-                <div> -->
                     <input type="radio" id="paragraph" (change)="updateVisibility()" name="drone" value="paragraph" [(ngModel)]="answerType" />
                     <label for="paragraph">Paragraph</label>
-                <!-- </div>
-                <div> -->
                     <input type="radio" id="custom" (change)="updateVisibility()" name="drone" value="custom" [(ngModel)]="answerType" />
                     <label for="custom">Custom</label>
                 </div>
             </div>
     </form>
 
+    <!-- <div *ngIf="customType">
+        {{textPhrase}}
+    </div> -->
+
     <!-- Selectors -->
-    <highlight-selector [selectors]="options" (options)="editOptions($event)"></highlight-selector>
+    <highlight-selector *ngIf="!customType" [selectors]="options" (options)="editOptions($event)"></highlight-selector>
+    <highlight-custom-selector *ngIf="customType" [selectors]="options" (options)="editOptions($event)" ></highlight-custom-selector>
     <highlight-correct [selectors]="options"></highlight-correct>
 </div>
+
 
 

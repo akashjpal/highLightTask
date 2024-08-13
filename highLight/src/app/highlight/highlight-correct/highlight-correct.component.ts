@@ -10,8 +10,10 @@ export class HighlightCorrectComponent implements OnInit {
 
   @Input()
   set selectors(value: { word: string, isSelected: boolean, isCorrect: boolean }[] | null) {
+    if(this._selectors !== value){
     this._selectors = value;
-    console.log('Options received:', this._selectors);
+    console.log('Options received at correct side:', this._selectors);
+    }
   }
 
   get selectors(): { word: string, isSelected: boolean, isCorrect: boolean }[] | null {
@@ -21,14 +23,13 @@ export class HighlightCorrectComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    console.log("Recieved at correct");
     console.log(this._selectors);
   }
 
-  selectorsKeys(): string[] {
-    return this._selectors ? this._selectors.map(selector => selector.word) : [];
-  }
 
   toggleSelection(index: number): void {
+    console.log(this._selectors)
     if (this._selectors && this._selectors[index]) {
       const item = this._selectors[index];
       if (item) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 
 @Component({
   selector: 'app-highlight',
@@ -11,35 +11,40 @@ export class HighlightComponent implements OnInit {
   answerType: string = "";
   options: { word: string, isSelected: boolean, isCorrect: boolean }[] | null = null;
   isVisible: boolean = false;
+  selectedText: string = "";
+  customType:true|false = false;
 
-  questionObject = {
-    question: "",
-    textPhrase: "",
-    answerType: "",
-    options: [{
-      word: "",
-      isSelected: false,
-      isCorrect: false
-    }]
+  constructor() {
+   
   }
 
-  constructor() {}
+  ngOnInit(): void {
+  }
 
-  ngOnInit(): void {}
+  captureSelection() {
+    const selection = window.getSelection();
+    if (selection) {
+      this.selectedText = selection.toString();
+    }
+  }
 
   getSelector(textPhrase: string, answerType: string): { word: string, isSelected: boolean, isCorrect: boolean }[] | null {
     if (answerType === "word") {
+      this.customType = false;
       return this.getWordOptions(textPhrase);
     } else if (answerType === "sentence") {
+      this.customType = false;
       return this.getSentenceOptions(textPhrase);
     } else if(answerType === "paragraph"){
-      return this.getParagraphOptions(textPhrase)
+      this.customType = false;
+      return this.getParagraphOptions(textPhrase);
+    } else if(answerType === "custom"){
+      return this.getCustomOptions(textPhrase);
     }
     return null;
   }
 
   getWordOptions(textPhrase: string): { word: string, isSelected: boolean, isCorrect: boolean }[] {
-    console.log(textPhrase);
     const wordOptions: string[] = textPhrase.split(" ");
     return wordOptions.map((word) => ({
       word: word,
@@ -66,80 +71,52 @@ export class HighlightComponent implements OnInit {
     }));
   }
 
-  // updateVisibility(): void {
-  //   console.log(this.question + " " + this.textPhrase + " " + this.answerType);
-  //   if (this.question !== "" && this.textPhrase !== "" && this.answerType !== "") {
-  //     this.options = this.getSelector(this.textPhrase, this.answerType);
-  //     this.isVisible = true;  
-  //   } else {
-  //     this.isVisible = false;
-  //   }
-  // }
-
-  editOptions(options: { word: string, isSelected: boolean, isCorrect: boolean }[] | null) {
-    console.log(options);
-    this.options = options;
-  }
-
-
-  // doing resize of the textarea
-  autoResize(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    //by default auto is 2 lines fixed for chrome, override this by setting rows=1
-    textarea.style.height = 'auto'; 
-    console.log(textarea.clientHeight);
-    // textarea.style.height = '21px'
-    textarea.style.height = textarea.scrollHeight + 'px';
-  }
-
-  onEnter(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      const textarea = event.target as HTMLTextAreaElement;
-      this.autoResize(event);
-    }
-  }
-
-  // handling custom selections
-
-  getCustomSelections(textPhrase: string): { word: string, isSelected: boolean, isCorrect: boolean }[] {
-    // This method doesn't split the text at predefined points, instead, it will allow for freeform selections
-    return [{ word: textPhrase, isSelected: false, isCorrect: false }];
-  }
-  
-
-  handleCustomSelection(event: Event): void {
-    const textarea = event.target as HTMLTextAreaElement;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-  
-    if (start !== end) { // Ensure there is a selection
-      const selectedText = this.question.substring(start, end);
-      if (this.options) {
-        console.log(this.options)
-        this.options.push({ word: selectedText, isSelected: false, isCorrect: false });
-      } else {
-        this.options = [{ word: selectedText, isSelected: false, isCorrect: false }];
-      }
-      console.log('Custom Selection:', selectedText);
-    }
+  getCustomOptions(textPhrase: string): { word: string, isSelected: boolean, isCorrect: boolean }[] | null {
+    // const customOptions: { word: string, isSelected: boolean, isCorrect: boolean }[] = [];
+    this.customType = true;
+    return [{
+      word:textPhrase,
+      isSelected:false,
+      isCorrect:false
+    }];
+    
   }
 
   updateVisibility(): void {
-    console.log(this.question + " " + this.textPhrase + " " + this.answerType);
     if (this.question !== "" && this.textPhrase !== "" && this.answerType !== "") {
-      if (this.answerType === 'custom') {
-        this.options = []; // Reset options for custom selections
-      } else {
-        this.options = this.getSelector(this.textPhrase, this.answerType);
-      }
+      this.options = this.getSelector(this.textPhrase, this.answerType);
       this.isVisible = true;  
     } else {
       this.isVisible = false;
     }
   }
+
+  editOptions(options: { word: string, isSelected: boolean, isCorrect: boolean }[] | null) {
+    this.options = options;
+    console.log(options);
+  }
+  // editLetMe(options: { word: string, isSelected: boolean, isCorrect: boolean }[] | null) {
+  //   // this.options = options;
+  //   console.log("Received at html");
+  //   this.options = options;
+  //   console.log(this.options);
+  // }
   
 
+  autoResize(event: Event): void {
+    const textarea = event.target as HTMLTextAreaElement;
+    textarea.style.height = 'auto'; 
+    textarea.style.height = textarea.scrollHeight + 'px';
+  }
+
+  onEnter(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.autoResize(event);
+    }
+  }
+
+
+ 
 
   
-
 }

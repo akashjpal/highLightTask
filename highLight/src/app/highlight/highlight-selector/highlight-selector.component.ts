@@ -36,4 +36,12 @@ export class HighlightSelectorComponent implements OnInit {
       this.options.emit(this._selectors);
     }
   }
+
+  // custom selection
+  onOptionClick(index: number): void {
+    if (this.selectors) {
+      this.selectors[index].isSelected = !this.selectors[index].isSelected;
+      this.options.emit(this.selectors);
+    }
+  }
 }

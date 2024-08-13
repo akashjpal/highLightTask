@@ -8,6 +8,7 @@ import { HighlightNavComponent } from './highlight-nav/highlight-nav.component';
 import { HighlightSelectorComponent } from './highlight-selector/highlight-selector.component';
 import { HighlightCorrectComponent } from './highlight-correct/highlight-correct.component';
 import { HighlightMainComponent } from './highlight-main/highlight-main.component';
+import { HighlightCustomComponent } from './highlight-custom-selector/highlight-custom-selector.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { HighlightMainComponent } from './highlight-main/highlight-main.componen
     HighlightNavComponent,
     HighlightSelectorComponent,
     HighlightCorrectComponent,
-    HighlightMainComponent
+    HighlightMainComponent,
+    HighlightCustomComponent
   ],
   imports: [
     BrowserModule,

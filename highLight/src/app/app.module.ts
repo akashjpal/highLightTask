@@ -13,7 +13,6 @@ import { HighLightModule } from './highlight/highlight.module';
   imports: [
     BrowserModule,
     HighLightModule,
-    
     AppRoutingModule,
   ],
   providers: [],
