@@ -111,7 +111,7 @@ export class HighlightCustomComponent implements OnInit {
     }
   
     this._selectors = newSelectors;
-    this.options.emit(this._selectors); // Emit before re-rendering
+    this.options.emit(newSelectors); // Emit before re-rendering
     this.updateHighlighting(); // Re-render the highlighting after emitting
   }
   
@@ -125,16 +125,38 @@ export class HighlightCustomComponent implements OnInit {
 
   updateHighlighting(): void {
     const container = this.el.nativeElement.querySelector('.highlight-container');
+    console.log("I'm in highlight");
     if (!container) return;
-
+    console.log("Officially in highlight");
+    // Clear the container
     container.innerHTML = '';
+
+    const div = this.renderer.createElement('div');
+    
+    this.renderer.appendChild(container,div);
+    
+    // Create a label element and add it to the container
+    const label = this.renderer.createElement('label');
+    this.renderer.setProperty(label, 'textContent', "Set Selectors");
+    // return;
+
+    this.renderer.appendChild(div, label);
+  
+    // Add a line break after the label
+    const br = this.renderer.createElement('br');
+    this.renderer.appendChild(div, br);
+    
+  
+    // Create and append span elements for each word state
     this.wordStates.forEach(wordState => {
+      
       const span = this.renderer.createElement('span');
       this.renderer.setProperty(span, 'textContent', wordState.word + ' ');
       if (wordState.isSelected) {
         this.renderer.addClass(span, 'highlighted');
       }
-      this.renderer.appendChild(container, span);
+      this.renderer.appendChild(div,span);
     });
   }
+  
 }

@@ -65,9 +65,17 @@
     </div> -->
 
     <!-- Selectors -->
-    <highlight-selector *ngIf="!customType" [selectors]="options" (options)="editOptions($event)"></highlight-selector>
+    <highlight-selector *ngIf="!customType" [selectors]="options" (options)="editOptions($event)" [concateWord]="collapseWord"></highlight-selector>
     <highlight-custom-selector *ngIf="customType" [selectors]="options" (options)="editOptions($event)" ></highlight-custom-selector>
-    <highlight-correct [selectors]="options"></highlight-correct>
+    <highlight-correct [selectors]="options"  (options)="editOptions($event)"></highlight-correct>
+    
+    <!-- number of answer selected -->
+     <div>
+        <label for="answer-select">Maximum number of answers that can be selected*:</label>
+        <select name="answer" id="answer-select">
+            <option *ngFor="let answer of totalCorrectAnswers" [value]="answer" selected>{{answer}}</option>
+        </select>
+     </div>
 </div>
 
 

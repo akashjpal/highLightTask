@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'highlight-correct',
@@ -20,6 +20,9 @@ export class HighlightCorrectComponent implements OnInit {
     return this._selectors;
   }
 
+  @Output() options: EventEmitter<{ word: string, isSelected: boolean, isCorrect: boolean }[] | null> = new EventEmitter<{ word: string, isSelected: boolean, isCorrect: boolean }[] | null>();
+
+
   constructor() {}
 
   ngOnInit(): void {
@@ -32,13 +35,11 @@ export class HighlightCorrectComponent implements OnInit {
     console.log(this._selectors)
     if (this._selectors && this._selectors[index]) {
       const item = this._selectors[index];
-      if (item) {
        
-        if (item.isSelected) {
+        if (item && item.isSelected) {
           item.isCorrect = !item.isCorrect;
         }
-        
-      }
+      this.options.emit(this._selectors);
     }
   }
   

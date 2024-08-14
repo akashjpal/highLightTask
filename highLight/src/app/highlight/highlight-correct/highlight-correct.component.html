@@ -1,12 +1,23 @@
 <form class="selectors-form">
   <label>Set Correct</label>
   <br>
-  <span class="selector-item" 
-        *ngFor="let item of selectors; let i = index" 
-        [class.cursor]="item.isSelected"
-        [class.selected]="item.isCorrect"
-        [class.disabled]="!item.isCorrect"
-        (click)="toggleSelection(i)">
-    {{ item.word }}
-  </span>
+  <div class="correct-text-section">
+    <ng-container *ngIf="selectors && selectors.length > 0; else noText">
+      <ng-container *ngFor="let item of selectors; let i = index">
+        <span class="selector-item" 
+            [class.cursor]="item.isSelected"
+            [class.selected]="item.isCorrect"
+            [class.disabled]="!item.isCorrect"
+            (click)="toggleSelection(i)">
+        {{ item.word }}
+        </span>
+        <!-- Handle line breaks or paragraph separations -->
+        <br *ngIf="item.word === '\n'">
+    </ng-container>
+  </ng-container>
+    
+    <ng-template #noText>
+      <p class="no-text-section">No text phrase has been entered yet</p>
+    </ng-template>
+  </div>
 </form>
