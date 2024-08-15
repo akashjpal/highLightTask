@@ -12,28 +12,23 @@ interface WordState {
   styleUrls: ['./highlight-custom-selector.component.css']
 })
 export class HighlightCustomComponent implements OnInit {
-  private _selectors: WordState[] | null = null;
   private wordStates: WordState[] = [];
 
   @Input() set selectors(value: WordState[] | null) {
-    if (value !== this._selectors) { // Only reinitialize if value has changed
-        console.log("Recieved at Highlight custom component")
-        console.log(value);
-        
-        this._selectors = value;
-        if (value && value.length > 0) {
-        this.initializeWordStates(value[0].word);
-        }
-        this.updateHighlighting();
+    if (value !== this.wordStates) {
+      console.log("Received at Highlight custom component");
+      console.log(value);
+      
+      this.wordStates = value ? value : [];
+      this.updateHighlighting();
     }
-    }
-
-
-  get selectors(): WordState[] | null {
-    return this._selectors;
   }
 
-  @Output() options:EventEmitter<WordState[] |null> = new EventEmitter<WordState[] | null>();
+  get selectors(): WordState[] | null {
+    return this.wordStates;
+  }
+
+  @Output() options: EventEmitter<WordState[] | null> = new EventEmitter<WordState[] | null>();
 
   constructor(private renderer: Renderer2, private el: ElementRef) {}
 
@@ -64,7 +59,7 @@ export class HighlightCustomComponent implements OnInit {
     const container = this.el.nativeElement.querySelector('.highlight-container');
     const startWord = this.getWordIndex(container, range.startContainer, range.startOffset);
     const endWord = this.getWordIndex(container, range.endContainer, range.endOffset);
-    // console.log(this.wordStates);
+
     this.updateWordStates(startWord, endWord);
   }
   
@@ -83,36 +78,43 @@ export class HighlightCustomComponent implements OnInit {
     return wordIndex;
   }
 
-  
-
   updateWordStates(startWord: number, endWord: number): void {
-    console.log();
     for (let i = startWord; i <= endWord; i++) {
       this.wordStates[i].isSelected = !this.wordStates[i].isSelected;
     }
     this.updateSelectors();
+    this.emitSelectors();
   }
-
   updateSelectors(): void {
+    if (!this.wordStates) { return; }
+  
     let newSelectors: WordState[] = [];
     let currentGroup: WordState[] = [];
   
     for (let wordState of this.wordStates) {
-      if (currentGroup.length === 0 || currentGroup[0].isSelected === wordState.isSelected) {
+      if (wordState.isSelected) {
+        // If the word is selected, add it to the current group
         currentGroup.push(wordState);
       } else {
-        newSelectors.push(this.mergeWordStates(currentGroup));
-        currentGroup = [wordState];
+        // If the word is not selected, merge the current group if it's not empty,
+        // then add the unselected word as a standalone item
+        if (currentGroup.length > 0) {
+          newSelectors.push(this.mergeWordStates(currentGroup));
+          currentGroup = [];
+        }
+        newSelectors.push(wordState);
       }
     }
   
+    // After the loop, merge any remaining selected words
     if (currentGroup.length > 0) {
       newSelectors.push(this.mergeWordStates(currentGroup));
     }
   
-    this._selectors = newSelectors;
-    this.options.emit(newSelectors); // Emit before re-rendering
-    this.updateHighlighting(); // Re-render the highlighting after emitting
+    console.log(newSelectors);
+  
+    // Uncomment this to update the _selectors with the new selectors
+    this.wordStates = newSelectors;
   }
   
   mergeWordStates(group: WordState[]): WordState {
@@ -123,40 +125,38 @@ export class HighlightCustomComponent implements OnInit {
     };
   }
 
+  emitSelectors(): void {
+    this.options.emit([...this.wordStates]); // Emit the updated word states
+    this.updateHighlighting(); // Re-render the highlighting after emitting
+  }
+
   updateHighlighting(): void {
     const container = this.el.nativeElement.querySelector('.highlight-container');
-    console.log("I'm in highlight");
     if (!container) return;
-    console.log("Officially in highlight");
+
     // Clear the container
     container.innerHTML = '';
 
     const div = this.renderer.createElement('div');
-    
-    this.renderer.appendChild(container,div);
-    
+    this.renderer.appendChild(container, div);
+
     // Create a label element and add it to the container
     const label = this.renderer.createElement('label');
     this.renderer.setProperty(label, 'textContent', "Set Selectors");
-    // return;
-
     this.renderer.appendChild(div, label);
-  
+
     // Add a line break after the label
     const br = this.renderer.createElement('br');
     this.renderer.appendChild(div, br);
-    
-  
+
     // Create and append span elements for each word state
     this.wordStates.forEach(wordState => {
-      
       const span = this.renderer.createElement('span');
       this.renderer.setProperty(span, 'textContent', wordState.word + ' ');
       if (wordState.isSelected) {
         this.renderer.addClass(span, 'highlighted');
       }
-      this.renderer.appendChild(div,span);
+      this.renderer.appendChild(div, span);
     });
   }
-  
 }
